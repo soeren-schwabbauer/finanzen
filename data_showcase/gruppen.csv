@@ -1,0 +1,130 @@
+kategorie,name,string,spalte
+Mobilität,ÖBB,obb-personenverkehr ag,verwendungszweck
+Mobilität,DB,DB VERTRIEB GMBH,gegenseite
+Mobilität,DB,DB VERTRIEB GMBH,verwendungszweck
+Mobilität,Nextbike,nextbike,gegenseite
+Mobilität,Westbahn,westbahn,gegenseite
+Mobilität,MVV,mvv ticketshop,gegenseite
+Mobilität,Wiener Linien,ONE-MOBILITY,gegenseite
+Mobilität,Flixbus,flix se,verwendungszweck
+Mobilität,ÖBB,oebb,gegenseite
+Mobilität,DB,DBVERTRIEBG,gegenseite
+Mobilität,Flixbus,VISA FLIXBUS.COM,gegenseite
+,,,
+,,,
+Lebensmittel,Hofer,VISA HOFER DANKT,gegenseite
+Lebensmittel,Billa,VISA BILLA DANKT,gegenseite
+Lebensmittel,Spar,VISA SPAR,gegenseite
+Lebensmittel,Lidl,VISA LIDL,gegenseite
+Lebensmittel,Migros,VISA MIGROS,gegenseite
+Lebensmittel,DENN's,VISA DENN S,gegenseite
+Lebensmittel,Baguette,VISA BAGUETTE FIL,gegenseite
+Lebensmittel,Mpreis,VISA MINIM,gegenseite
+Lebensmittel,Mpreis,VISA MPREIS,gegenseite
+Lebensmittel,Penny,VISA PENNY,gegenseite
+Lebensmittel,Yedigun,yedigun supermarkt,gegenseite
+Lebensmittel,DM,visa dm-fi,gegenseite
+Lebensmittel,Bäcker,strock,gegenseite
+Lebensmittel,Bäcker,trunk,gegenseite
+Lebensmittel,Carrefour,carrefour,gegenseite
+Lebensmittel,Brotquelle,BROTQUELLE,gegenseite
+Lebensmittel,Gutmann,GUTMANN,gegenseite
+Lebensmittel,Unimarkt,UNIMARKT,gegenseite
+Lebensmittel,Bäcker,BAECKEREI,gegenseite
+Lebensmittel,ADEG,VISA ADEG,gegenseite
+Lebensmittel,Tankstelle,Tankstelle,gegenseite
+Lebensmittel,Radmer Supermarkt,RADMERER-STUBE,gegenseite
+Lebensmittel,Bäcker,Backwa,gegenseite
+Lebensmittel,Tankstelle,VISA VIS A VIS,gegenseite
+,,,
+,,,
+Freizeit/Shopping,Sport Okay,sport okay gmbh,verwendungszweck
+Freizeit/Shopping,Bergzeit,bergzeit gmbh,verwendungszweck
+Freizeit/Shopping,Bike-Discount,bike-discount gmbh,verwendungszweck
+Freizeit/Shopping,Bike24,bike24,gegenseite
+Freizeit/Shopping,Intersport,intersport,gegenseite
+Freizeit/Shopping,Apidura,apidura,gegenseite
+Freizeit/Shopping,Amazon,amazon,gegenseite
+Freizeit/Shopping,Decathlon,decathlon,verwendungszweck
+Freizeit/Shopping,Groundies,Groundie,verwendungszweck
+Freizeit/Shopping,Kastner & Ohler,VISA KASTNER & OHLER,gegenseite
+Freizeit/Shopping,Buchhandlung,WAGNERSCHE,gegenseite
+Freizeit/Shopping,Jack&Jones,JACK&JONES,gegenseite
+Freizeit/Shopping,Radladen,speed planet,gegenseite
+Freizeit/Shopping,MT Biker,mtbiker.at,gegenseite
+Freizeit/Shopping,Friseur,degler,gegenseite
+Freizeit/Shopping,Post,visa post,gegenseite
+Freizeit/Shopping,MediaMarkt,mediamarkt,gegenseite
+Freizeit/Shopping,BikeComponents,BIKECOMPONE,gegenseite
+Freizeit/Shopping,Amazon,amzn,gegenseite
+Freizeit/Shopping,Lenovo,lenoo,gegenseite
+Freizeit/Shopping,Lupine,LUPINE LIGHTING,gegenseite
+Freizeit/Shopping,Sport Conrad,VISA SPORT CONRAD,gegenseite
+Freizeit/Shopping,Post,Deutschen Post,verwendungszweck
+Freizeit/Shopping,AmerSports,VISA AMERSPORTS,gegenseite
+Freizeit/Shopping,Möbel,ikea,gegenseite
+Freizeit/Shopping,Möbel,ikea,verwendungszweck
+Freizeit/Shopping,Möbel,Furniture,verwendungszweck
+Freizeit/Shopping,Möbel,AERIS,gegenseite
+Freizeit/Shopping,Renngebühren,VISA DATASPORT.COM,gegenseite
+Freizeit/Shopping,Lenovo,LENOVO AT,gegenseite
+Freizeit/Shopping,AirBnB,VISA PAYPAL AIRBNB,gegenseite
+Freizeit/Shopping,Flug,VISA TURKISH AIRL000000045X,gegenseite
+Freizeit/Shopping,AkkuShop,AkkuShop,verwendungszweck
+Freizeit/Shopping,MediaMarkt,MediaMar,verwendungszweck
+Freizeit/Shopping,InnApp Käufe,ITUNESAPPST,verwendungszweck
+ Freizeit/Shopping,Baumarkt,VISA OBI BAU, gegenseite
+,,,
+,,,
+Essen gehen,Eis,eissalon,gegenseite
+Essen gehen,Eis,gelateria,gegenseite
+Essen gehen,Pizza,visa acasa,gegenseite
+Essen gehen,Pizza,osteria,gegenseite
+Essen gehen,Mc Donalds,mcdonalds,gegenseite
+Essen gehen,Subway,visa subway,gegenseite
+Essen gehen,Asiatisch,pins kitchen,gegenseite
+Essen gehen,Mensa,VISA MENSA,gegenseite
+Essen gehen,Gasthaus,fleischerei ellinger,gegenseite
+Essen gehen,Gasthaus,TUTTENDOERF,gegenseite
+Essen gehen,Gasthaus,VISA EISENERZER HOF,gegenseite
+Essen gehen,Gasthaus,VISA ME GROUP AUSTRIA GMBH,gegenseite
+Essen gehen,Kebab,KEBAP,gegenseite
+Essen gehen,Kebab,VISA CHICKIS,gegenseite
+Essen gehen,Asiatisch,vevi,gegenseite
+Essen gehen,Kaffee,VISA GOTA,gegenseite
+Essen gehen,Kaffee,VISA AIDA,gegenseite
+Essen gehen,Kaffee,Hotel Victoria,gegenseite
+Essen gehen,Kaffee,coffee,gegenseite
+,,,
+,,,
+Arzt,Apotheke,apotheke,gegenseite
+Arzt,Zahnarzt,VISA ORDINATION DR OEZTUERK,gegenseite
+Arzt,Behandlung,Priv.-Doz. Dr. Simon Euler,gegenseite
+,,,
+,,,
+Abos/Mitgliedschaften,Strava,strava inc,verwendungszweck
+Abos/Mitgliedschaften,Handy,LIDL CONNECT,gegenseite
+Abos/Mitgliedschaften,girocard,girocard,verwendungszweck
+Abos/Mitgliedschaften,ÖH-Beitrag,Matrikelnummer,verwendungszweck
+Abos/Mitgliedschaften,Spotify,spotify,gegenseite
+Abos/Mitgliedschaften,Handy,E-Plus Service GmbH,gegenseite
+Abos/Mitgliedschaften,Versicherung,adac versicherung,gegenseite
+Abos/Mitgliedschaften,ChatGPT,VISA CHATGPT SUBSCRIPTION,gegenseite
+Abos/Mitgliedschaften,Chegg,"Chegg, Inc",gegenseite
+,,,
+Wohnen,Miete – Reindorfgasse,Esther,gegenseite
+Wohnen,Miete – Ibk,halbe Miete,verwendungszweck
+,,,
+,,,
+Gehalt,FMA,finanzmarktaufsicht,gegenseite
+Gehalt,Uni,leopold-franzens-universitat innsbruck,gegenseite
+Unterhalt,Mama,taschengeld - studium,gegenseite
+OmaBonus,Oma II,Oma II,gegenseite
+OmaBonus,Oma I,Oma I,gegenseite
+Verkäufe,WillHaben,Adyen N.V.,gegenseite
+Verkäufe,WillHaben,willhaben PayLivery,verwendungszweck
+Zinsen,Trade Republik,Zinsgutschrift - Trade Republik,gegenseite
+Zinsen,Ing - Sparbrief,Zinsgutschrift - Ing,gegenseite
+,,,
+,,,
+Bargeld,Bargeld,Bargeldauszahlung VISA CARD,gegenseite
