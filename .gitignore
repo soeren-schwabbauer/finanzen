@@ -1,7 +1,41 @@
-.Rproj.user
-.Rhistory
-.RData
-.Ruserdata
-data/manual/
-git.csv
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtuelle Umgebung
+.venv/
+venv/
+env/
+
+# Umgebungsvariablen
+.env
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Build-Artefakte
+build/
+dist/
+*.egg-info/
+
+# Test / Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Betriebssystem
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
 *.sh
+.Rproj.user/
