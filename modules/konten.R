@@ -157,7 +157,7 @@ kontenServer <- function(id, finanzkonto) {
       # Speichern
       observeEvent(input[[paste0("save_", account_id)]], {
         df <- data_reactive[[account_id]]
-        file_path <- file.path("MANUALDATA", paste0(account_id, ".csv"))
+        file_path <- file.path("data/manual", paste0(account_id, ".csv"))
         
         comment_lines <- c(
           paste0("# bank: ", account$bank),

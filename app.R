@@ -33,7 +33,6 @@ library(jsonlite)
 
 library(dplyr)
 
-
 # read manual data =============================================================
 
 source("./functions/readdata_manual.R")
@@ -70,9 +69,8 @@ data_inflation$datum <- as.Date(paste0("01-", gsub("\\.", "", data_inflation$dat
 # load modules for shiny app ###################################################
 
 source("./modules/uebersicht.R")
-
 source("./modules/giro.R")
-
+source("./modules/portfolio.R")
 source("./modules/konten.R")
 source("./modules/gruppen.R")
 
@@ -82,15 +80,19 @@ source("./modules/gruppen.R")
 
 ui <- page_navbar(
   title = "Finanzen",
-  # ⬇️ HEAD-Inhalte gehören hier rein
+  # HEAD-Inhalte gehören hier rein
   header = tags$head(
     includeCSS("www/card-reveal-full-screen.css")
   ),
   
-  # ⬇️ Das hier sind gültige Navigations-Panels
+  # Das hier sind gültige Navigations-Panels
   nav_panel(
     title = "Übersicht",
     uebersichtUI("uebersicht", data_manual, data_portfolio)
+  ),
+  nav_panel(
+    title = "Portfolio",
+    portfolioUI("portfolio", data_manual, data_historical, data_portfolio)
   ),
   nav_panel(
     title = "Giro",
@@ -126,6 +128,7 @@ server <- function(input, output, session) {
   
   uebersichtServer("uebersicht", data_manual, data_portfolio, data_inflation)
   giroServer("giro", data_manual)
+  portfolioServer("portfolio", data_manual, data_historical, data_portfolio)
   kontenServer("konten", data_manual)
   gruppenServer("gruppen")
 

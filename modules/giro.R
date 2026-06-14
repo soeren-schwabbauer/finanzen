@@ -14,14 +14,13 @@
 nettobilanz <- function(info) {
   
   data <- info$data
+  var  <- info$betrag_var
   
-  # aggregate data ---------------------
   plot_data <- data %>%
     group_by(year_month) %>%
-    summarise(sum = sum(betrag_edited, na.rm = TRUE), .groups = "drop") %>%
-    ungroup() %>%
-    mutate(typ = case_when(sum < 0 ~ "Defizit", .default = "Überschuss")) %>%
-    mutate(kategorie = "") 
+    summarise(sum = sum(.data[[var]], na.rm = TRUE), .groups = "drop") %>%
+    mutate(typ = ifelse(sum < 0, "Defizit", "Überschuss"),
+           kategorie = "")
   
   if(info$smooth == "Mittelwert") {
     plot_data %<>%
@@ -64,31 +63,30 @@ nettobilanz <- function(info) {
 # Verlauf ----------------------------------------------------------------------
 verlauf <- function(info) {
   
-  data <- info$data
-  
-  if(info$art == "Verhältnis") {
-    sum_einnahmen_monthly <- data %>% 
-      filter(typ == "Einnahme") %>%
-      group_by(year_month) %>%
-      summarise(sum_einnahmen_month = sum(betrag_edited))
-  }
-  
-  # subset nach einnahmen & ausgaben
-  if(info$art == "Einnahmen") plot_data <- data %>% filter(betrag_edited > 0) 
-  if(info$art %in% c("Ausgaben", "Verhältnis")) plot_data <- data %>% filter(betrag_edited < 0)
-  
-  plot_data %<>%
-    group_by(year_month, kategorie = as.character(kategorie)) %>%
-    summarise(sum = abs(sum(betrag_edited, na.rm = TRUE)), .groups = "drop") %>%
-    complete(year_month, kategorie, fill = list(sum = 0)) %>%  
-    mutate(year_month = as.character(year_month))
-  
-  # summe pro monat --------------------
-  # für ausgaben/einnahmen
-  if(info$art == "Verhältnis") {
-    plot_data %<>% left_join(sum_einnahmen_monthly, by = "year_month") %>%
-      mutate(sum = round(sum/sum_einnahmen_month*100,2))
-  }
+    data <- info$data
+    var  <- info$betrag_var
+    
+    if(info$art == "Verhältnis") {
+      sum_einnahmen_monthly <- data %>%
+        filter(.data[[var]] > 0) %>%
+        group_by(year_month) %>%
+        summarise(sum_einnahmen_month = sum(.data[[var]], na.rm = TRUE), .groups="drop")
+    }
+    
+    if(info$art == "Einnahmen") plot_data <- data %>% filter(.data[[var]] > 0)
+    if(info$art %in% c("Ausgaben", "Verhältnis")) plot_data <- data %>% filter(.data[[var]] < 0)
+    
+    plot_data <- plot_data %>%
+      group_by(year_month, kategorie = as.character(kategorie)) %>%
+      summarise(sum = abs(sum(.data[[var]], na.rm = TRUE)), .groups = "drop") %>%
+      tidyr::complete(year_month, kategorie, fill = list(sum = 0)) %>%
+      mutate(year_month = as.character(year_month))
+    
+    if(info$art == "Verhältnis") {
+      plot_data <- plot_data %>%
+        left_join(sum_einnahmen_monthly, by = "year_month") %>%
+        mutate(sum = round(sum / sum_einnahmen_month * 100, 2))
+    }
   
   # smooth als mittelwert --------------
   if(info$smooth == "Mittelwert") {
@@ -169,38 +167,25 @@ verlauf <- function(info) {
 sankey <- function(info) {
   
   data <- info$data
+  var  <- info$betrag_var
   
-  # Step 1: Prepare the data for income flows
   income_flows <- data %>%
-    filter(betrag_edited > 0) %>%
+    filter(.data[[var]] > 0) %>%
     group_by(from = name, to = kategorie) %>%
-    summarise(weight = sum(betrag_edited), .groups = 'drop') %>%
-    # For ordering largest group to smallest
-    ungroup() %>%
-    group_by(to) %>%
-    mutate(sum_to = sum(weight)) %>%
-    arrange(-sum_to, to) %>%
-    select(-sum_to)
+    summarise(weight = sum(.data[[var]], na.rm = TRUE), .groups = 'drop') %>%
+    group_by(to) %>% mutate(sum_to = sum(weight)) %>% arrange(-sum_to, to) %>% select(-sum_to)
   
-  # Step 3: Aggregate income by category
   income_aggregation <- data %>%
-    filter(betrag_edited > 0) %>%
+    filter(.data[[var]] > 0) %>%
     group_by(from = kategorie) %>%
-    summarise(weight = sum(betrag_edited), .groups = 'drop') %>%
-    ungroup() %>%
-    mutate(to = "Einkommen", .after = from) %>%
-    # Order
-    arrange(-weight)
+    summarise(weight = sum(.data[[var]], na.rm = TRUE), .groups = 'drop') %>%
+    mutate(to = "Einkommen", .after = from) %>% arrange(-weight)
   
-  # Step 4: Aggregate expenses by category
   expense_aggregation <- data %>%
-    filter(betrag_edited < 0) %>%
+    filter(.data[[var]] < 0) %>%
     group_by(to = kategorie) %>%
-    summarise(weight = sum(-betrag_edited), .groups = 'drop') %>%
-    ungroup() %>%
-    mutate(from = "Ausgaben", .before = to) %>% # Aggregate to a single "Ausgaben" node
-    # Arrange
-    arrange(desc(weight))
+    summarise(weight = sum(-.data[[var]], na.rm = TRUE), .groups = 'drop') %>%
+    mutate(from = "Ausgaben", .before = to) %>% arrange(desc(weight))
   
   # Adjust for savings or deficit
   if (sum(income_aggregation$weight) > sum(expense_aggregation$weight)) {
@@ -249,17 +234,18 @@ sankey <- function(info) {
 }
 
 tabelle <- function(info) {
-  
   data <- info$data
+  var  <- info$betrag_var
   
-  data %>%
-    select(all_of(info$auswahl), datum, gegenseite, verwendungszweck, betrag_edited) %>%
-    reactable(
-      groupBy = c(info$auswahl),
-      columns = list(
-        betrag_edited = colDef(aggregate = "sum", format = colFormat(currency = "EUR"))
-      )
+  # dynamisch die ausgewählte Betrags-Spalte anzeigen/aggregieren
+  reactable(
+    data %>% select(all_of(info$auswahl), datum, gegenseite, verwendungszweck, !!var := .data[[var]]),
+    groupBy = c(info$auswahl),
+    columns = setNames(
+      list(colDef(aggregate = "sum", format = colFormat(currency = "EUR"))),
+      var
     )
+  )
 }
         
 
@@ -353,8 +339,12 @@ giroUI <- function(id, girokonten) {
                              "Kategorien in Ausgaben",
                              choices = NULL, selected = NULL,
                              multiple = TRUE, width = "100%")),
-          column(1, 
-                 actionButton(ns("refresh_data"), label = "", icon = icon("repeat")))
+          column(1,
+                 selectInput(ns("betrag_var"), "Betragsvariable",
+                             choices = c("Bearbeitet" = "betrag_edited",
+                                         "Original"        = "betrag"),
+                             selected = "betrag_edited",
+                             width = "100%")),
         ),
         fluidRow(
           column(12, radioButtons(ns("verlauf_smooth"), "Werte anzeigen als:",
@@ -375,40 +365,26 @@ giroServer <- function(id, girokonten) {
     
     load_gruppen <- function() read.csv(paste0("./data/manual/", "gruppen.csv"))
                                         
-    girokonten_rv <- reactiveVal(readdata_maual())
     gruppen_rv <- reactiveVal(load_gruppen())
-    
-    observeEvent(input$refresh_data, {
-      new_data <- readdata_maual()
-      girokonten_rv(new_data)
-      
-      gruppen_rv(new_gruppen)
-    })
     
     
     # komplette daten
     GIR_allekategorien <- reactive({
       
       # Girokonten sind konten mit GIR oder GTH im Namen
-      GIR <- bind_rows(lapply(girokonten_rv(), function(list) list[["data"]])) %>%
-        
+      var <- input$betrag_var  # "betrag_edited" oder "betrag"
+      
+      GIR <- bind_rows(lapply(girokonten, function(list) list[["data"]])) %>%
         mutate(datum = as.Date(datum)) %>%
-        # filter date aus auswahl - zuerst, um speed zu erhöhen für join der kategorien
-        filter(datum >= input$filter_date[1] & datum <= input$filter_date[2])  %>%
-        
-        # eigene Konten ausschließen
+        filter(datum >= input$filter_date[1] & datum <= input$filter_date[2]) %>%
         filter(!str_detect(gegenseite, "_GIR"),
                !str_detect(gegenseite, "_GTH"),
                !str_detect(gegenseite, "_EXT")) %>%
-        filter(betrag_edited != 0) %>%
-        
-        mutate(monat_jahr = format(datum, "%Y-%m")) %>%
-        
-        mutate(year = format(datum, "%Y")) %>%
-        mutate(year_month = format(datum, "%Y-%m")) %>%
-        # eigene klasse für aktien, damit nicht angezeit wird, in einnahmen, bzw ausgaben, aber in 
-        mutate(typ = factor(case_when(betrag_edited < 0 ~ "Ausgabe", 
-                                      .default = "Einnahme")))
+        filter(.data[[var]] != 0) %>%                               # << neu
+        mutate(monat_jahr = format(datum, "%Y-%m"),
+               year = format(datum, "%Y"),
+               year_month = format(datum, "%Y-%m"),
+               typ  = factor(ifelse(.data[[var]] < 0, "Ausgabe", "Einnahme")))  # << neu
       
       # load gruppen for matching ------
       gruppen <- gruppen_rv()  %>%
@@ -449,12 +425,12 @@ giroServer <- function(id, girokonten) {
     
     # Kategorien aus GIR ---------------
     reactive_choices_einnahmen <- reactive({
-      GIR_allekategorien() %>% filter(betrag_edited > 0) %>%
+      GIR_allekategorien() %>% filter(.data[[input$betrag_var]] > 0) %>%
         pull(kategorie) %>% unique()
     })
     
     reactive_choices_ausgaben <- reactive({
-      GIR_allekategorien() %>% filter(betrag_edited < 0) %>%
+      GIR_allekategorien() %>% filter(.data[[input$betrag_var]] < 0) %>%
         pull(kategorie) %>% unique()
     })
     
@@ -464,7 +440,7 @@ giroServer <- function(id, girokonten) {
       updateSelectInput(session,
                         "filter_kategorien_einnahmen",
                         choices = reactive_choices_einnahmen(),
-                        selected = reactive_choices_einnahmen()) # Preserve existing selection
+                        selected = reactive_choices_einnahmen()[!reactive_choices_einnahmen() %in% c("ETF", "Sparbrief", "Crypto")]) # Preserve existing selection
     })
     
     observe({
@@ -488,67 +464,60 @@ giroServer <- function(id, girokonten) {
     # Nettobilanz ----------------------
     output$nettobilanz_plot <- renderHighchart({
       req(GIR())
-      nettobilanz_info <- list(
+      nettobilanz(list(
         data = GIR(),
-        smooth = input$verlauf_smooth
-      )
-      nettobilanz(nettobilanz_info)
+        smooth = input$verlauf_smooth,
+        betrag_var = input$betrag_var
+      ))
     })
     
-    
-    # Verlauf --------------------------
     output$einnahmen_plot <- renderHighchart({
       req(GIR())
-      info_verlauf <- list(
+      verlauf(list(
         data = GIR(),
-        art = "Einnahmen", # Einnahme/Ausgabe/Verhältnis
-        smooth = input$verlauf_smooth
-      )
-      verlauf(info = info_verlauf)
+        art = "Einnahmen",
+        smooth = input$verlauf_smooth,
+        betrag_var = input$betrag_var
+      ))
     })
     
     output$ausgaben_plot <- renderHighchart({
       req(GIR())
-      info_verlauf <- list(
+      verlauf(list(
         data = GIR(),
-        art = "Ausgaben", # Einnahme/Ausgabe/Verhältnis
-        smooth = input$verlauf_smooth
-      )
-      verlauf(info = info_verlauf)
+        art = "Ausgaben",
+        smooth = input$verlauf_smooth,
+        betrag_var = input$betrag_var
+      ))
     })
     
     output$verhältnis_plot <- renderHighchart({
       req(GIR())
-      info_verlauf <- list(
+      verlauf(list(
         data = GIR(),
-        art = "Verhältnis", # Einnahme/Ausgabe/Verhältnis
-        smooth = input$verlauf_smooth
-      )
-      verlauf(info = info_verlauf)
+        art = "Verhältnis",
+        smooth = input$verlauf_smooth,
+        betrag_var = input$betrag_var
+      ))
     })
     
-    # Sankey Diagramm -------------------
     output$sankey_plot <- renderHighchart({
       req(GIR())
-      cat("\nSankey anzeigen als:", input$sankey_values)
-      # list to pass input info into function
-      sankey_input <- list(
+      sankey(list(
         data = GIR(),
-        show = input$sankey_values, 
-        filter_date = input$filter_date # zur berechnung von durchschnittsmonat
-      )
-      sankey(info = sankey_input)
+        show = input$sankey_values,
+        filter_date = input$filter_date,
+        betrag_var = input$betrag_var
+      ))
     })
     
-    
-    # Reactable ------------------------
     output$tabelle_reactable <- renderReactable({
       req(GIR())
-      tabelle_input <- list(
+      tabelle(list(
         data = GIR(),
-        auswahl = input$reactable_auswahl
-      )
-      tabelle(tabelle_input)
+        auswahl = input$reactable_auswahl,
+        betrag_var = input$betrag_var
+      ))
     })
     
   })

@@ -29,7 +29,7 @@ gruppenUI <- function(id) {
   )
 }
 
-gruppenServer <- function(id, gruppen_path = "./MANUALDATA/gruppen.csv", on_save_callback = NULL) {
+gruppenServer <- function(id, gruppen_path = "./data/manual/gruppen.csv", on_save_callback = NULL) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     

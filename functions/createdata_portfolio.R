@@ -72,6 +72,8 @@ createdata_portfolio <- function(manualdata, historicaldata) {
       display_name = "ING - SPARBRIEF"
     } else if(name == "TRBKDEBBXXX_DEP") {
       display_name = "TRADEREPUBLIC - DEPOT"
+    } else if(name == "TRBKDEBBXXX_WAL") {
+      display_name = "TRADEREPUBLIC - WALLET"
     }
     
     konto = gsub(".* ", "", display_name)
