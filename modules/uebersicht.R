@@ -4,7 +4,7 @@ if(FALSE) {
     grouping_var = "konto", #bank-insgesammt-display_name,
     display_values = "absolut", #prozent
     subset_var = c("DEPOT", "GIRO", "EXTRAKONTO", "WALLET"),
-    filter_daterange = c("2024-11-01", as.character(Sys.Date())),
+    filter_daterange = c(as.character(Sys.Date()-365*2), as.character(Sys.Date())),
     incl_inflation = FALSE
   )
 }
@@ -29,6 +29,14 @@ uebersichtUI <- function(id, finanzkonto, bank_konto) {
         title = "Vermögen",
         card_body(
           highchartOutput(ns("vermoegen_plot"))
+        )
+      ),
+      
+      # Rendite als eigene Kachel
+      nav_panel(
+        title = "Rendite",
+        card_body(
+          highchartOutput(ns("rendite_plot"))
         )
       ),
       
@@ -67,7 +75,7 @@ uebersichtUI <- function(id, finanzkonto, bank_konto) {
               dateRangeInput(
                 ns("filter_daterange"),
                 "Zeitraum auswählen",
-                start = "2023-01-01",
+                start = Sys.Date()-365*2,
                 end = Sys.Date(),
                 min = "2020-01-01",
                 max = Sys.Date()
@@ -561,6 +569,32 @@ uebersichtServer <- function(id, MANUALDATA, PORTFOLIODATA, INFLATIONDATA, bank_
         ) %>%
         hc_title(text = "") %>%
         hc_yAxis(title = list(text = "Vermögen (€)"), min = 0)
+    })
+    
+    # -------------------------------------------------------------------------
+    # Rendite Plot als eigene Kachel
+    # -------------------------------------------------------------------------
+    output$rendite_plot <- renderHighchart({
+      
+      df <- data_vermoegen() %>%
+        mutate(
+          datum_TS = datetime_to_timestamp(as.POSIXct(datum)),
+          rendite = mit_rendite_ohne_inflation - ohne_rendite_ohne_inflation
+        )
+      
+      s1 <- map2(df$datum_TS, df$rendite, ~ list(x = .x, y = .y))
+      
+      highchart() %>%
+        hc_chart(type = "line") %>%
+        hc_xAxis(type = "datetime", title = list(text = "Datum")) %>%
+        hc_add_series(name = "Rendite", data = s1, type = "line") %>%
+        hc_tooltip(
+          shared = TRUE,
+          valueDecimals = 0,
+          valueSuffix = " €"
+        ) %>%
+        hc_title(text = "") %>%
+        hc_yAxis(title = list(text = "Rendite (€)"))
     })
     
     # -------------------------------------------------------------------------
