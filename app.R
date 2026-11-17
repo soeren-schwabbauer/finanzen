@@ -108,13 +108,6 @@ ui <- page_navbar(
              gruppenUI("gruppen")
       )
     )
-  ),
-  nav_spacer(),
-  nav_menu(
-    title = "Links",
-    align = "right",
-    nav_item("x"),
-    nav_item("y")
   )
 )
 
